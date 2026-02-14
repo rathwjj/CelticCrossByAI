@@ -1,0 +1,152 @@
+package main
+
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
+
+/* ---------- DATA MODEL ---------- */
+
+type Card struct {
+	Name    string
+	Arcana  string
+	Suit    string
+	Meaning string
+}
+
+type Deck struct {
+	Cards []Card
+}
+
+/* ---------- DECK LOGIC ---------- */
+
+func NewDeck() *Deck {
+	// Minimal but COMPLETE working deck sample
+	// You can expand this to all 78 cards later
+	cards := []Card{
+		{"The Fool", "Major", "", "Beginnings, openness, leap of faith"},
+		{"The Magician", "Major", "", "Skill, focus, manifestation"},
+		{"The High Priestess", "Major", "", "Intuition, inner voice"},
+		{"The Empress", "Major", "", "Creation, nurture, growth"},
+		{"The Emperor", "Major", "", "Structure, authority"},
+		{"The Hierophant", "Major", "", "Tradition, belief systems"},
+		{"The Lovers", "Major", "", "Choice, alignment"},
+		{"The Chariot", "Major", "", "Willpower, direction"},
+		{"Strength", "Major", "", "Inner strength, patience"},
+		{"The Hermit", "Major", "", "Reflection, solitude"},
+		{"Wheel of Fortune", "Major", "", "Cycles, change"},
+		{"Justice", "Major", "", "Balance, cause and effect"},
+		{"The Hanged Man", "Major", "", "Pause, new perspective"},
+		{"Death", "Major", "", "Endings, transformation"},
+		{"Temperance", "Major", "", "Integration, moderation"},
+		{"The Devil", "Major", "", "Attachment, limitation"},
+		{"The Tower", "Major", "", "Disruption, revelation"},
+		{"The Star", "Major", "", "Hope, clarity"},
+		{"The Moon", "Major", "", "Uncertainty, illusion"},
+		{"The Sun", "Major", "", "Clarity, vitality"},
+		{"Judgement", "Major", "", "Reckoning, awakening"},
+		{"The World", "Major", "", "Completion, integration"},
+		{"Ace of Cups", "Cups", "Ace", "Emotional beginning, love"},
+		{"Two of Cups", "Cups", "2", "Partnership, connection"},
+		{"Three of Cups", "Cups", "3", "Community, celebration"},
+		{"Four of Cups", "Cups", "4", "Apathy, contemplation"},
+		{"Five of Cups", "Cups", "5", "Loss, regret"},
+		{"Six of Cups", "Cups", "6", "Nostalgia, memory"},
+		{"Seven of Cups", "Cups", "7", "Choices, illusion"},
+		{"Eight of Cups", "Cups", "8", "Withdrawal, transition"},
+		{"Nine of Cups", "Cups", "9", "Satisfaction, wish fulfilled"},
+		{"Ten of Cups", "Cups", "10", "Emotional harmony"},
+		{"Page of Cups", "Cups", "Page", "Sensitivity, creative spark"},
+		{"Knight of Cups", "Cups", "Knight", "Romance, pursuit"},
+		{"Queen of Cups", "Cups", "Queen", "Compassion, intuition"},
+		{"King of Cups", "Cups", "King", "Emotional balance"},
+		{"Ace of Swords", "Swords", "Ace", "Clarity, truth"},
+		{"Two of Swords", "Swords", "2", "Indecision, avoidance"},
+		{"Three of Swords", "Swords", "3", "Heartbreak, separation"},
+		{"Four of Swords", "Swords", "4", "Rest, recovery"},
+		{"Five of Swords", "Swords", "5", "Conflict, tension"},
+		{"Six of Swords", "Swords", "6", "Transition, moving on"},
+		{"Seven of Swords", "Swords", "7", "Strategy, secrecy"},
+		{"Eight of Swords", "Swords", "8", "Restriction, limitation"},
+		{"Nine of Swords", "Swords", "9", "Anxiety, worry"},
+		{"Ten of Swords", "Swords", "10", "Ending, collapse"},
+		{"Page of Swords", "Swords", "Page", "Curiosity, vigilance"},
+		{"Knight of Swords", "Swords", "Knight", "Direct action, intensity"},
+		{"Queen of Swords", "Swords", "Queen", "Independence, perception"},
+		{"King of Swords", "Swords", "King", "Authority, logic"},
+		{"Ace of Pentacles", "Pentacles", "Ace", "Opportunity, prosperity"},
+		{"Two of Pentacles", "Pentacles", "2", "Balance, adaptability"},
+		{"Three of Pentacles", "Pentacles", "3", "Collaboration, skill"},
+		{"Four of Pentacles", "Pentacles", "4", "Control, security"},
+		{"Five of Pentacles", "Pentacles", "5", "Hardship, scarcity"},
+		{"Six of Pentacles", "Pentacles", "6", "Generosity, support"},
+		{"Seven of Pentacles", "Pentacles", "7", "Assessment, patience"},
+		{"Eight of Pentacles", "Pentacles", "8", "Dedication, mastery"},
+		{"Nine of Pentacles", "Pentacles", "9", "Independence, comfort"},
+		{"Ten of Pentacles", "Pentacles", "10", "Wealth, stability"},
+		{"Page of Pentacles", "Pentacles", "Page", "Study, opportunity"},
+		{"Knight of Pentacles", "Pentacles", "Knight", "Discipline, reliability"},
+		{"Queen of Pentacles", "Pentacles", "Queen", "Practical care, security"},
+		{"King of Pentacles", "Pentacles", "King", "Success, material authority"},
+	}
+
+	return &Deck{Cards: cards}
+}
+
+func (d *Deck) Shuffle() {
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(d.Cards), func(i, j int) {
+		d.Cards[i], d.Cards[j] = d.Cards[j], d.Cards[i]
+	})
+}
+
+func (d *Deck) CutOneThird() {
+	cut := len(d.Cards) / 3
+	d.Cards = d.Cards[cut:]
+}
+
+func (d *Deck) Draw(n int) []Card {
+	if n > len(d.Cards) {
+		n = len(d.Cards)
+	}
+	drawn := d.Cards[:n]
+	d.Cards = d.Cards[n:]
+	return drawn
+}
+
+/* ---------- CELTIC CROSS ---------- */
+
+func DrawCelticCross(d *Deck) []Card {
+	return d.Draw(10)
+}
+
+/* ---------- MAIN ---------- */
+
+func main() {
+	deck := NewDeck()
+	deck.Shuffle()
+	deck.CutOneThird()
+
+	cards := DrawCelticCross(deck)
+
+	positions := []string{
+		"1. Significator",
+		"2. Crossing",
+		"3. Foundation",
+		"4. Past",
+		"5. Crown",
+		"6. Future",
+		"7. Self",
+		"8. Environment",
+		"9. Hopes / Fears",
+		"10. Outcome",
+	}
+
+	fmt.Println("Celtic Cross Reading (upright only)")
+	fmt.Println("---------------------------------")
+
+	for i, card := range cards {
+		fmt.Printf("%s: %s\n", positions[i], card.Name)
+	}
+}

@@ -35,8 +35,6 @@ func main() {
 		{"The Sun", "Positivity, fun, warmth, success, vitality."},
 		{"Judgement", "Judgement, rebirth, inner calling, absolution."},
 		{"The World", "Completion, integration, accomplishment, travel."},
-		// For brevity, using generic placeholders for Minor Arcana. 
-		// You can expand these similarly to the Major Arcana above.
 		{"Ace of Wands", "Inspiration, new opportunities, growth."},
 		{"Two of Wands", "Future planning, progress, decisions."},
 		{"Three of Wands", "Expansion, foresight, overseas opportunities."},
@@ -51,7 +49,6 @@ func main() {
 		{"Knight of Wands", "Energy, passion, inspired action, adventure."},
 		{"Queen of Wands", "Courage, confidence, independence, social butterfly."},
 		{"King of Wands", "Natural-born leader, vision, entrepreneur."},
-		// Add remaining Cups, Swords, and Pentacles following the same pattern.
 		{"Ace of Swords", "Breakthroughs, mental clarity, success."},
 		{"Two of Swords", "Difficult choices, indecision, stalemate."},
 		{"Three of Swords", "Heartbreak, emotional pain, sorrow."},
@@ -65,7 +62,7 @@ func main() {
 		{"Page of Swords", "Curiosity, restlessness, mental energy."},
 		{"Knight of Swords", "Ambition, drive, fast-paced action."},
 		{"Queen of Swords", "Clarity, independence, direct communication."},
-		{"King of Swords", "Mental discipline, authority, truth."}
+		{"King of Swords", "Mental discipline, authority, truth."},
 		{"Ace of Cups", "New feelings, creativity, spirituality."},
 		{"Two of Cups", "Unity, partnership, mutual attraction."},
 		{"Three of Cups", "Celebration, friendship, community."},
@@ -79,7 +76,7 @@ func main() {
 		{"Page of Cups", "Creative opportunities, intuitive messages."},
 		{"Knight of Cups", "Romance, charm, following the heart."},
 		{"Queen of Cups", "Compassion, emotional security, intuition."},
-		{"King of Cups", "Emotional balance, control, generosity."}
+		{"King of Cups", "Emotional balance, control, generosity."},
 		{"Ace of Pentacles", "New financial opportunity, manifestation."},
 		{"Two of Pentacles", "Balance, multitasking, adaptability."},
 		{"Three of Pentacles", "Teamwork, collaboration, learning."},
@@ -93,7 +90,7 @@ func main() {
 		{"Page of Pentacles", "Manifestation, financial opportunity, skill."},
 		{"Knight of Pentacles", "Hard work, productivity, routine."},
 		{"Queen of Pentacles", "Nurturing, practical, providing."},
-		{"King of Pentacles", "Wealth, business, leadership, security."}
+		{"King of Pentacles", "Wealth, business, leadership, security."},
 	}
 
 	positions := []string{
@@ -111,7 +108,7 @@ func main() {
 
 	spread, err := drawCards(deck, 10)
 	if err != nil {
-		fmt.Println("Error drawing cards:", err)
+		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
@@ -125,20 +122,27 @@ func main() {
 }
 
 func drawCards(deck []Card, count int) ([]Card, error) {
+	if count > len(deck) {
+		return nil, fmt.Errorf("insufficient cards")
+	}
+
+	temp := append([]Card(nil), deck...)
 	selected := make([]Card, 0, count)
-	// Create a copy to avoid mutating a global state if this were a larger app
-	tempDeck := append([]Card(nil), deck...)
 
 	for i := 0; i < count; i++ {
-		idx, err := rand.Int(rand.Reader, big.NewInt(int64(len(tempDeck))))
+		max := int64(len(temp))
+		nBig, err := rand.Int(rand.Reader, big.NewInt(max))
 		if err != nil {
 			return nil, err
 		}
-		
-		n := idx.Int64()
-		selected = append(selected, tempDeck[n])
-		// Remove drawn card from temp deck to prevent duplicates
-		tempDeck = append(tempDeck[:n], tempDeck[n+1:]...)
+		n := nBig.Int64()
+
+		selected = append(selected, temp[n])
+
+		// Swap with last element and truncate
+		temp[n] = temp[len(temp)-1]
+		temp = temp[:len(temp)-1]
 	}
+
 	return selected, nil
 }
